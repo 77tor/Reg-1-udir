@@ -39,7 +39,7 @@
             box-sizing: border-box;
         }
 
-        /* Velkomst-side spesifikk stil */
+        /* Velkomst-boksen */
         .welcome-box {
             background: #ebf5fb;
             border: 3px solid var(--blue);
@@ -49,51 +49,47 @@
             margin-top: 20px;
         }
 
-        /* Virtuelt Tastatur */
+        /* Aktivt svarfelt blir gult */
+        .input-large.active-input {
+            background-color: var(--yellow) !important;
+            border-color: #f6ad55 !important;
+        }
+
+        /* TASTATUR */
         .keypad {
             position: fixed;
             bottom: 110px;
             left: 50%;
             transform: translateX(-50%);
-            background: #d1d5db;
-            padding: 12px;
-            border-radius: 20px;
+            background: #cbd5e0;
+            padding: 8px;
+            border-radius: 15px;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.3);
+            grid-template-columns: repeat(6, 1fr); 
+            gap: 8px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
             z-index: 3000;
             display: none;
         }
 
         .key {
-            width: 75px;
-            height: 65px;
+            width: 60px;
+            height: 55px;
             background: white;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 5px 0 #9ca3af;
+            box-shadow: 0 4px 0 #9ca3af;
             user-select: none;
         }
 
-        .key:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #9ca3af;
-        }
-
-        .key.delete { background: #feb2b2; }
-        .key.done { background: var(--green); color: white; }
-
-        .input-large:focus {
-            background-color: var(--yellow);
-            outline: none;
-            border-color: #f6ad55;
-        }
+        .key:active { transform: translateY(2px); box-shadow: 0 1px 0 #9ca3af; }
+        .key.delete { background: #feb2b2; font-size: 16px; }
+        .key.done { background: var(--green); color: white; font-size: 18px; }
 
         .question-box { display: none; }
         .question-box.active { display: block; }
@@ -114,8 +110,12 @@
         .input-large { 
             width: 100px; height: 100px; font-size: 50px; 
             text-align: center; border: 4px solid var(--blue); border-radius: 20px; 
-            cursor: pointer; caret-color: transparent;
+            cursor: pointer; caret-color: transparent; background: white;
         }
+
+        .img-card { border: 4px solid #edf2f7; border-radius: 20px; padding: 10px; cursor: pointer; background: white; transition: 0.2s; }
+        .img-card.selected { border-color: var(--green); background: #f0fff4; transform: scale(1.05); }
+        .img-card img { max-width: 120px; height: auto; pointer-events: none; }
 
         .drag-source, .q13-drag-source { 
             min-height: 100px; border: 2px dashed #cbd5e0; padding: 15px; 
@@ -127,12 +127,12 @@
             width: 80px; height: 80px; background: var(--blue); color: white; 
             display: flex; align-items: center; justify-content: center; 
             font-size: 35px; border-radius: 15px; cursor: pointer;
-            touch-action: none; user-select: none; z-index: 10;
+            touch-action: none; user-select: none;
         }
 
         .drag-item-img {
             width: 80px; height: 80px; border-radius: 15px; cursor: pointer;
-            touch-action: none; user-select: none; z-index: 10;
+            touch-action: none; user-select: none;
             object-fit: cover; border: 2px solid var(--blue);
         }
 
@@ -142,7 +142,7 @@
             justify-content: center; background: #fafafa; 
         }
 
-        .number-line-container { width: 90%; position: relative; height: 100px; margin: 40px auto; touch-action: none; cursor: pointer; }
+        .number-line-container { width: 90%; position: relative; height: 100px; margin: 40px auto; touch-action: none; }
         .line-base { width: 100%; height: 6px; background: #333; position: absolute; top: 50%; border-radius: 3px; }
         .tick { position: absolute; height: 20px; width: 3px; background: #333; top: 50%; transform: translateY(-50%); }
         .tick-label { position: absolute; top: 60px; transform: translateX(-50%); font-weight: bold; font-size: 18px; }
@@ -162,10 +162,6 @@
         }
         .page-dot.active { background: #2d3748; color: white; border-color: #2d3748; }
 
-        .img-card { border: 4px solid #edf2f7; border-radius: 20px; padding: 10px; cursor: pointer; background: white; }
-        .img-card.selected { border-color: var(--green); background: #f0fff4; }
-        .img-card img { max-width: 120px; height: auto; }
-
         .hidden { display: none !important; }
         .btn-blue { background: var(--blue); color: white; border: none; padding: 15px 25px; border-radius: 15px; font-size: 20px; cursor: pointer; }
     </style>
@@ -173,17 +169,17 @@
 <body>
 
 <div id="virtual-keypad" class="keypad">
+    <div class="key" onclick="pressKey('0')">0</div>
     <div class="key" onclick="pressKey('1')">1</div>
     <div class="key" onclick="pressKey('2')">2</div>
     <div class="key" onclick="pressKey('3')">3</div>
     <div class="key" onclick="pressKey('4')">4</div>
+    <div class="key delete" onclick="pressKey('del')">Slett</div>
     <div class="key" onclick="pressKey('5')">5</div>
     <div class="key" onclick="pressKey('6')">6</div>
     <div class="key" onclick="pressKey('7')">7</div>
     <div class="key" onclick="pressKey('8')">8</div>
     <div class="key" onclick="pressKey('9')">9</div>
-    <div class="key delete" onclick="pressKey('del')">⬅</div>
-    <div class="key" onclick="pressKey('0')">0</div>
     <div class="key done" onclick="closeKeypad()">OK</div>
 </div>
 
@@ -193,7 +189,8 @@
         <p style="font-size: 20px;">Hører du lyden?</p>
         <button class="btn-blue" onclick="new Audio('test.mp3').play()">🔊 Test lyd</button>
         <br><br>
-        <button onclick="startQuiz()" style="background:var(--green); color:white; border:none; padding:20px 40px; font-size:25px; border-radius:50px; cursor:pointer; margin-top:20px;">START ▶</button>
+        <p>Trykk på knappen under for å starte.</p>
+        <button onclick="startQuiz()" style="background:var(--green); color:white; border:none; padding:20px 40px; font-size:25px; border-radius:50px; cursor:pointer; margin-top:20px; box-shadow: 0 4px 0 #2f855a;">START ▶</button>
     </div>
 </div>
 
@@ -205,75 +202,18 @@
     <div id="question-container">
         <div class="question-box" id="q1"><h2>Oppgave 1</h2><div class="layout-flex"><img src="01.png" class="img-main"><input type="text" id="ans1" class="input-large" readonly onclick="openKeypad(this)"></div></div>
         <div class="question-box" id="q2"><h2>Oppgave 2</h2><div class="layout-flex"><img src="02.png" class="img-main"><input type="text" id="ans2" class="input-large" readonly onclick="openKeypad(this)"></div></div>
-        
-        <div class="question-box" id="q3">
-            <h2>Oppgave 3</h2>
-            <div id="q3-source" class="drag-source">
-                <div class="drag-item" id="q3_1">1</div>
-                <div class="drag-item" id="q3_2">2</div>
-                <div class="drag-item" id="q3_5">5</div>
-                <div class="drag-item" id="q3_9">9</div>
-            </div>
-            <div class="layout-flex">
-                <div class="drop-target" id="q3_d1"></div>
-                <div class="drop-target" id="q3_d2"></div>
-            </div>
-        </div>
-
-        <div class="question-box" id="q4">
-            <h2>Oppgave 4</h2>
-            <div id="q4-source" class="drag-source">
-                <div class="drag-item" id="q4_1">1</div>
-                <div class="drag-item" id="q4_3">3</div>
-                <div class="drag-item" id="q4_5">5</div>
-                <div class="drag-item" id="q4_7">7</div>
-            </div>
-            <div class="layout-flex">
-                <div class="drop-target" id="q4_d1"></div>
-                <div class="drop-target" id="q4_d2"></div>
-            </div>
-        </div>
-
+        <div class="question-box" id="q3"><h2>Oppgave 3</h2><div id="q3-source" class="drag-source"><div class="drag-item" id="q3_1">1</div><div class="drag-item" id="q3_2">2</div><div class="drag-item" id="q3_5">5</div><div class="drag-item" id="q3_9">9</div></div><div class="layout-flex"><div class="drop-target" id="q3_d1"></div><div class="drop-target" id="q3_d2"></div></div></div>
+        <div class="question-box" id="q4"><h2>Oppgave 4</h2><div id="q4-source" class="drag-source"><div class="drag-item" id="q4_1">1</div><div class="drag-item" id="q4_3">3</div><div class="drag-item" id="q4_5">5</div><div class="drag-item" id="q4_7">7</div></div><div class="layout-flex"><div class="drop-target" id="q4_d1"></div><div class="drop-target" id="q4_d2"></div></div></div>
         <div class="question-box" id="q5"><h2>Oppgave 5</h2><div class="layout-flex"><img src="05.png" style="width:150px"><div id="grid5" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;"><div class="img-card" onclick="toggleSelection(this)"><img src="05_01.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct5_1"><img src="05_02.png"></div><div class="img-card" onclick="toggleSelection(this)"><img src="05_03.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct5_2"><img src="05_04.png"></div><div class="img-card" onclick="toggleSelection(this)"><img src="05_05.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct5_3"><img src="05_06.png"></div></div></div></div>
         <div class="question-box" id="q6"><h2>Oppgave 6</h2><div class="layout-flex"><img src="06.png" style="width:150px"><div id="grid6" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;"><div class="img-card" onclick="toggleSelection(this)" id="correct6_1"><img src="06_01.png"></div><div class="img-card" onclick="toggleSelection(this)"><img src="06_02.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct6_3"><img src="06_03.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct6_4"><img src="06_04.png"></div><div class="img-card" onclick="toggleSelection(this)"><img src="06_05.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct6_5"><img src="06_06.png"></div></div></div></div>
-
-        <div class="question-box" id="q7"><h2>Oppgave 7</h2><img src="07.png" style="width:150px; display:block; margin:auto;"><div class="number-line-container" id="nl7"><div class="line-base"></div><div id="arrow7" class="arrow-pointer" style="left: 0%">▼</div><div id="ticks7"></div></div></div>
-        <div class="question-box" id="q8"><h2>Oppgave 8</h2><img src="08.png" style="width:150px; display:block; margin:auto;"><div class="number-line-container" id="nl8"><div class="line-base"></div><div id="arrow8" class="arrow-pointer" style="left: 0%">▼</div><div id="ticks8"></div></div></div>
-
+        <div class="question-box" id="q7"><h2>Oppgave 7</h2><img src="07.png" style="width:150px; display:block; margin:auto;"><div class="number-line-container" id="nl7"><div class="line-base"></div><div id="arrow7" class="arrow-pointer">▼</div><div id="ticks7"></div></div></div>
+        <div class="question-box" id="q8"><h2>Oppgave 8</h2><img src="08.png" style="width:150px; display:block; margin:auto;"><div class="number-line-container" id="nl8"><div class="line-base"></div><div id="arrow8" class="arrow-pointer">▼</div><div id="ticks8"></div></div></div>
         <div class="question-box" id="q9"><h2>Oppgave 9</h2><div class="layout-flex"><div style="font-size:60px">1 + 2 =</div><input type="text" id="ans9" class="input-large" readonly onclick="openKeypad(this)"></div></div>
         <div class="question-box" id="q10"><h2>Oppgave 10</h2><div class="layout-flex"><div style="font-size:60px">3 + 3 =</div><input type="text" id="ans10" class="input-large" readonly onclick="openKeypad(this)"></div></div>
-
         <div class="question-box" id="q11"><h2>Oppgave 11</h2><div class="layout-flex"><div class="drop-target" style="border-style:solid; font-size:40px;">3</div><input type="text" id="ans11_a" class="input-large" readonly onclick="openKeypad(this)"><div class="drop-target" style="border-style:solid; font-size:40px;">5</div><input type="text" id="ans11_b" class="input-large" readonly onclick="openKeypad(this)"></div></div>
         <div class="question-box" id="q12"><h2>Oppgave 12</h2><div class="layout-flex"><input type="text" id="ans12_a" class="input-large" readonly onclick="openKeypad(this)"><input type="text" id="ans12_b" class="input-large" readonly onclick="openKeypad(this)"><div class="drop-target" style="border-style:solid; font-size:40px;">9</div><div class="drop-target" style="border-style:solid; font-size:40px;">10</div></div></div>
-
-        <div class="question-box" id="q13">
-            <h2>Oppgave 13</h2>
-            <div id="q13-source" class="q13-drag-source">
-                <img src="13_03.png" class="drag-item-img" id="i13_3">
-                <img src="13_02.png" class="drag-item-img" id="i13_2">
-                <img src="13_04.png" class="drag-item-img" id="i13_4">
-                <img src="13_01.png" class="drag-item-img" id="i13_1">
-            </div>
-            <div class="layout-flex">
-                <img src="13.png" style="width:100px; height:100px; border:2px solid #333; border-radius:10px;">
-                <div class="drop-target-large" id="d13_1"></div>
-                <div class="drop-target-large" id="d13_2"></div>
-                <div class="drop-target-large" id="d13_3"></div>
-                <div class="drop-target-large" id="d13_4"></div>
-            </div>
-        </div>
-
-        <div class="question-box" id="q14">
-            <h2>Oppgave 14</h2>
-            <div id="grid14" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
-                <div class="img-card" onclick="toggleSelection(this)"><img src="14_01.png"></div>
-                <div class="img-card" onclick="toggleSelection(this)" id="correct14_1"><img src="14_02.png"></div>
-                <div class="img-card" onclick="toggleSelection(this)"><img src="14_03.png"></div>
-                <div class="img-card" onclick="toggleSelection(this)" id="correct14_2"><img src="14_04.png"></div>
-                <div class="img-card" onclick="toggleSelection(this)" id="correct14_3"><img src="14_05.png"></div>
-                <div class="img-card" onclick="toggleSelection(this)"><img src="14_06.png"></div>
-            </div>
-        </div>
+        <div class="question-box" id="q13"><h2>Oppgave 13</h2><div id="q13-source" class="q13-drag-source"><img src="13_03.png" class="drag-item-img" id="i13_3"><img src="13_02.png" class="drag-item-img" id="i13_2"><img src="13_04.png" class="drag-item-img" id="i13_4"><img src="13_01.png" class="drag-item-img" id="i13_1"></div><div class="layout-flex"><img src="13.png" style="width:100px; height:100px; border:2px solid #333; border-radius:10px;"><div class="drop-target-large" id="d13_1"></div><div class="drop-target-large" id="d13_2"></div><div class="drop-target-large" id="d13_3"></div><div class="drop-target-large" id="d13_4"></div></div></div>
+        <div class="question-box" id="q14"><h2>Oppgave 14</h2><div id="grid14" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;"><div class="img-card" onclick="toggleSelection(this)"><img src="14_01.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct14_1"><img src="14_02.png"></div><div class="img-card" onclick="toggleSelection(this)"><img src="14_03.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct14_2"><img src="14_04.png"></div><div class="img-card" onclick="toggleSelection(this)" id="correct14_3"><img src="14_05.png"></div><div class="img-card" onclick="toggleSelection(this)"><img src="14_06.png"></div></div></div>
     </div>
 
     <div id="result-screen" class="hidden" style="text-align:center;">
@@ -298,28 +238,28 @@
     let activeInput = null;
 
     function openKeypad(el) {
+        document.querySelectorAll('.input-large').forEach(i => i.classList.remove('active-input'));
         activeInput = el;
+        activeInput.classList.add('active-input');
         document.getElementById('virtual-keypad').style.display = 'grid';
     }
 
     function pressKey(key) {
         if (!activeInput) return;
-        if (key === 'del') {
-            activeInput.value = activeInput.value.slice(0, -1);
-        } else {
-            if (activeInput.value.length < 2) activeInput.value += key;
-        }
+        if (key === 'del') { activeInput.value = activeInput.value.slice(0, -1); } 
+        else { if (activeInput.value.length < 2) activeInput.value += key; }
     }
 
     function closeKeypad() {
         document.getElementById('virtual-keypad').style.display = 'none';
-        activeInput = null;
+        if (activeInput) {
+            activeInput.classList.remove('active-input');
+            activeInput = null;
+        }
     }
 
     window.addEventListener('mousedown', (e) => {
-        if (!e.target.classList.contains('key') && !e.target.classList.contains('input-large')) {
-            closeKeypad();
-        }
+        if (!e.target.closest('.key') && !e.target.classList.contains('input-large')) closeKeypad();
     });
 
     function startQuiz() {
@@ -334,9 +274,7 @@
         dotsContainer.innerHTML = '';
         for (let i = 1; i <= totalPages; i++) {
             const dot = document.createElement('div');
-            dot.className = 'page-dot';
-            dot.innerText = i;
-            dot.id = 'dot-' + i;
+            dot.className = 'page-dot'; dot.innerText = i; dot.id = 'dot-' + i;
             dot.onclick = () => goToPage(i);
             dotsContainer.appendChild(dot);
         }
@@ -354,28 +292,23 @@
         document.querySelectorAll('.page-dot').forEach(d => d.classList.remove('active'));
         document.getElementById('q' + n).classList.add('active');
         document.getElementById('dot-' + n).classList.add('active');
-        
         const audio = document.getElementById('audio-player');
         audio.src = (n < 10 ? '0' + n : n) + '.mp3';
         currentPage = n;
-        
         document.getElementById('submit-btn').className = (n === 14) ? "btn-blue" : "hidden";
-        document.getElementById('submit-btn').style.background = "var(--green)";
     }
 
     function changePage(step) { goToPage(currentPage + step); }
 
     function createTicks(id, max, labels) {
         const container = document.getElementById('ticks' + id);
-        container.innerHTML = ''; 
+        container.innerHTML = '';
         for (let i = 0; i <= max; i++) {
             const tick = document.createElement('div');
-            tick.className = 'tick';
-            tick.style.left = (i / max * 100) + '%';
+            tick.className = 'tick'; tick.style.left = (i / max * 100) + '%';
             if (labels.includes(i)) {
                 const label = document.createElement('div');
-                label.className = 'tick-label';
-                label.innerText = i;
+                label.className = 'tick-label'; label.innerText = i;
                 label.style.left = (i / max * 100) + '%';
                 container.appendChild(label);
             }
@@ -394,7 +327,7 @@
                 document.getElementById('arrow' + id).style.left = (snapped / max * 100) + '%';
                 arrowPositions[id] = snapped;
             };
-            el.addEventListener('touchstart', handle);
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); handle(e); });
             el.addEventListener('mousedown', handle);
         });
     }
@@ -403,42 +336,30 @@
         const draggables = document.querySelectorAll('.drag-item, .drag-item-img');
         draggables.forEach(item => {
             let active = false;
-            const start = (e) => {
-                active = true;
-                item.style.position = 'fixed';
-                move(e);
-            };
+            const start = (e) => { active = true; item.style.position = 'fixed'; move(e); };
             const move = (e) => {
                 if (!active) return;
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                item.style.left = (clientX - 40) + 'px';
-                item.style.top = (clientY - 40) + 'px';
+                item.style.left = (clientX - 40) + 'px'; item.style.top = (clientY - 40) + 'px';
             };
             const end = (e) => {
-                if (!active) return;
-                active = false;
-                item.style.display = 'none';
+                if (!active) return; active = false; item.style.display = 'none';
                 const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
                 const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
                 const target = document.elementFromPoint(clientX, clientY)?.closest('.drop-target, .drop-target-large, .drag-source, .q13-drag-source');
                 item.style.display = 'block';
                 if (item.classList.contains('drag-item')) item.style.display = 'flex';
                 item.style.position = 'static';
-                
                 if (target) {
-                    if (target.classList.contains('drop-target') || target.classList.contains('drop-target-large')) {
-                        if (target.children.length > 0) {
-                            const current = target.children[0];
-                            const sourceId = current.id.includes('i13') ? 'q13-source' : (current.id.split('_')[0] + '-source');
-                            const backTo = document.getElementById(sourceId);
-                            if (backTo) backTo.appendChild(current);
-                        }
+                    if ((target.classList.contains('drop-target') || target.classList.contains('drop-target-large')) && target.children.length > 0) {
+                        const backTo = document.getElementById(item.id.includes('i13') ? 'q13-source' : (target.children[0].id.split('_')[0] + '-source'));
+                        backTo.appendChild(target.children[0]);
                     }
                     target.appendChild(item);
                 }
             };
-            item.addEventListener('touchstart', start);
+            item.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); });
             item.addEventListener('touchmove', (e) => { e.preventDefault(); move(e); });
             item.addEventListener('touchend', end);
             item.addEventListener('mousedown', start);
@@ -450,10 +371,8 @@
     function toggleSelection(el) { el.classList.toggle('selected'); }
 
     function finishTest() {
-        let score = 0;
-        let results = [];
+        let score = 0; let results = [];
         const check = (isCorrect) => { results.push(isCorrect); if (isCorrect) score++; };
-
         check(document.getElementById('ans1').value.trim() == "5");
         check(document.getElementById('ans2').value.trim() == "8");
         const v3 = Array.from(document.querySelectorAll('#q3_d1 div, #q3_d2 div')).map(e => e.innerText);
@@ -462,39 +381,28 @@
         check(v4.includes('3') && v4.includes('7'));
         check(document.querySelectorAll('#grid5 .selected').length === 3 && document.querySelectorAll('#correct5_1.selected, #correct5_2.selected, #correct5_3.selected').length === 3);
         check(document.querySelectorAll('#grid6 .selected').length === 4 && document.querySelectorAll('#correct6_1.selected, #correct6_3.selected, #correct6_4.selected, #correct6_5.selected').length === 4);
-        check(arrowPositions[7] === 5);
-        check(arrowPositions[8] === 4);
+        check(arrowPositions[7] === 5); check(arrowPositions[8] === 4);
         check(document.getElementById('ans9').value.trim() == "3");
         check(document.getElementById('ans10').value.trim() == "6");
         check(document.getElementById('ans11_a').value.trim() == "4" && document.getElementById('ans11_b').value.trim() == "6");
         check(document.getElementById('ans12_a').value.trim() == "7" && document.getElementById('ans12_b').value.trim() == "8");
-        
-        const q13c = document.getElementById('d13_1').firstChild?.id === 'i13_3' && 
-                     document.getElementById('d13_2').firstChild?.id === 'i13_2' && 
-                     document.getElementById('d13_3').firstChild?.id === 'i13_4' && 
-                     document.getElementById('d13_4').firstChild?.id === 'i13_1';
+        const q13c = document.getElementById('d13_1').firstChild?.id === 'i13_3' && document.getElementById('d13_2').firstChild?.id === 'i13_2' && document.getElementById('d13_3').firstChild?.id === 'i13_4' && document.getElementById('d13_4').firstChild?.id === 'i13_1';
         check(q13c);
-        
         check(document.querySelectorAll('#grid14 .selected').length === 3 && document.querySelectorAll('#correct14_1.selected, #correct14_2.selected, #correct14_3.selected').length === 3);
         
         document.getElementById('question-container').classList.add('hidden');
         document.getElementById('top-ui').classList.add('hidden');
         document.getElementById('main-nav').classList.add('hidden');
         document.getElementById('virtual-keypad').style.display = 'none';
-        
         const feedbackList = document.getElementById('feedback-list');
         feedbackList.innerHTML = '';
         results.forEach((res, i) => {
             const div = document.createElement('div');
-            div.style.padding = '10px';
-            div.style.background = 'white';
-            div.style.borderRadius = '10px';
-            div.style.fontWeight = 'bold';
-            div.innerHTML = `Oppgave ${i+1}<br>${res ? '✅' : '⭕'}`;
+            div.style.padding = '10px'; div.style.background = 'white'; div.style.borderRadius = '10px'; div.style.fontWeight = 'bold';
+            div.innerHTML = `Opp ${i+1}<br>${res ? '✅' : '⭕'}`;
             div.style.color = res ? 'var(--green)' : 'var(--red)';
             feedbackList.appendChild(div);
         });
-
         document.getElementById('result-screen').classList.remove('hidden');
         document.getElementById('score-display').innerText = score + " / 14";
     }
